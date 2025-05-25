@@ -1,0 +1,7 @@
+# .ansible-lint
+# This file can be left empty if defaults are fine,
+# or used to customize ansible-lint behavior.
+# For collections, ansible-lint usually auto-detects the type.
+# Example: Set warning list
+# warn_list:
+#  - experimental  # Warn about experimental features

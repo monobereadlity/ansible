@@ -139,6 +139,52 @@ molecule test -s default
 
 **Continuous Integration (CI):**
 Basic CI is set up using GitHub Actions (`.github/workflows/molecule_tests.yml`) to automatically run Molecule tests for the `rocm` role on pushes and pull requests to the `master` branch.
+=======
+## Development, Testing, and Linting
+
+This collection uses several tools to ensure code quality and test functionality. The primary interface for these tools is the `Makefile` located in the repository root.
+
+### Tools
+
+*   **Yamllint**: Used for linting YAML files to ensure they adhere to syntax and style guidelines. Configuration is in `.yamllint`.
+*   **Ansible-Lint**: Used for linting Ansible playbooks, roles, and collections for best practices and potential errors. Configuration is in `.ansible-lint`.
+*   **Molecule**: Used for testing the Ansible role (`disable_suspend`) across different scenarios and distributions (though currently configured for Fedora). Molecule manages the test environment (e.g., Docker containers) and executes the role, followed by verification steps. Scenario configuration is within `roles/disable_suspend/molecule/default/`.
+
+### Makefile Targets
+
+The following `make` targets are available for common development tasks:
+
+*   `make lint-yaml`:
+    ```bash
+    yamllint .
+    ```
+    Runs `yamllint` across all YAML files in the repository.
+
+*   `make lint-ansible`:
+    ```bash
+    ansible-lint
+    ```
+    Runs `ansible-lint` to check Ansible-specific code.
+
+*   `make molecule`:
+    ```bash
+    (cd roles/disable_suspend && molecule test -s default)
+    ```
+    Executes the default Molecule test scenario for the `disable_suspend` role. This will typically create a test instance (e.g., a Docker container), converge the role, run verification playbooks, and then destroy the instance.
+
+*   `make release`:
+    ```bash
+    ansible-galaxy collection build
+    ```
+    Builds the Ansible collection into a tarball, which can then be published to Ansible Galaxy or installed locally.
+
+*   `make all`:
+    ```bash
+    make lint-yaml lint-ansible molecule
+    ```
+    A convenience target that runs all linters (`lint-yaml`, `lint-ansible`) and Molecule tests (`molecule`). This is typically what you would run before pushing changes or creating a pull request.
+
+To use these, ensure you have the necessary tools installed (e.g., `yamllint`, `ansible-lint`, `molecule`, `ansible-core`). The GitHub Actions CI workflow also uses these targets.
 
 ## License
 

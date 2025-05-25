@@ -1,4 +1,4 @@
-.PHONY: help test test-rocm lint
+.PHONY: help test test-rocm lint-ansible lint-yaml
 
 SHELL := /bin/bash
 molécules := $(shell find ./roles -name molecule.yml -print0 | xargs -0 -n1 dirname | sed 's|./roles/||')
@@ -9,12 +9,15 @@ help:
 	@echo "  test                - Run Molecule tests for all roles: $(molécules)"
 	@echo "  test-<role_name>    - Run Molecule tests for a specific role (e.g., test-rocm)"
 
-lint:
-	@echo "Linting Ansible roles..."
+lint-yaml:
+	yamllint .
+
+lint-ansible:
+  @echo "Linting Ansible roles..."
 	ansible-lint roles/*
 
 test: ## Run Molecule tests for all roles
-	@for role in $(molécules); do \
+	@for role in $(molecules); do \
 		echo "Running Molecule tests for $$role..."; \
 		if [ -d "roles/$$role/molecule/default" ]; then \
 			(cd roles/$$role && molecule test -s default); \
@@ -23,7 +26,7 @@ test: ## Run Molecule tests for all roles
 		fi; \
 	done
 
-# Target to run molecule tests for a specific role, e.g. make test-rocm_install
+# Target to run molecule tests for a specific role, e.g. make test-rocm
 test-%:
 	@echo "Running Molecule tests for $*..."
 	@if [ -d "roles/$*/molecule/default" ]; then \
@@ -33,5 +36,7 @@ test-%:
 		exit 1; \
 	fi
 
-# Specific target for rocm_install for convenience, though covered by test-%
-# This line is removed as per instructions.
+release:
+	ansible-galaxy collection build
+
+all: lint-yaml lint-ansible test release
