@@ -1,0 +1,44 @@
+---
+name: Ansible Role CI
+
+on:
+  push:
+    branches:
+      - master
+      - main # If your default branch is main
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  molecule_tests:
+    name: Molecule tests for rocm
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        role:
+          - rocm # Specifically testing the new role
+
+    steps:
+      - name: Check out the codebase
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x' # Use a recent Python 3 version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible ansible-core molecule molecule-docker ansible-lint yamllint docker
+
+      - name: Run Molecule tests for rocm role
+        run: |
+          cd roles/rocm
+          molecule test -s default
+        # If you want to test all roles, you might loop through directories in 'roles/'
+        # and run 'molecule test -s default' in each that contains a molecule.yml
+        # Example for all roles (more complex, ensure roles are structured for this):
+        # find ./roles -name molecule.yml -print0 | xargs -0 -n1 dirname | xargs -I {} sh -c 'cd {} && molecule test -s default'
