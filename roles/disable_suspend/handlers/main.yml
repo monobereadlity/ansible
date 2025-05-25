@@ -1,0 +1,8 @@
+---
+# handlers file for disable_suspend role
+
+- name: restart systemd-logind
+  ansible.builtin.systemd:
+    name: systemd-logind
+    state: restarted
+  become: yes

@@ -1,0 +1,31 @@
+---
+# tasks file for disable_suspend role
+
+- name: Configure logind.conf to ignore suspend actions
+  ansible.builtin.lineinfile:
+    path: /etc/systemd/logind.conf
+    regexp: '^{{ item.key }}='
+    line: '{{ item.key }}={{ item.value }}'
+    state: present
+    create: yes  # Create the file if it doesn't exist
+    mode: '0644'
+  loop:
+    - { key: 'HandleSuspendKey', value: 'ignore' }
+    - { key: 'HandleLidSwitch', value: 'ignore' }
+    - { key: 'HandleLidSwitchExternalPower', value: 'ignore' }
+    - { key: 'IdleAction', value: 'ignore' }
+    - { key: 'IdleActionSec', value: '0' } # Ensure this is a string if Ansible has issues with int
+  notify: restart systemd-logind
+  become: yes
+
+- name: Mask systemd sleep and suspend targets
+  ansible.builtin.systemd:
+    name: '{{ item }}'
+    masked: yes
+    state: stopped # Ensure the service is stopped before masking
+  loop:
+    - sleep.target
+    - suspend.target
+    - hibernate.target
+    - hybrid-sleep.target
+  become: yes
