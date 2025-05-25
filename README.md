@@ -1,4 +1,4 @@
-# Ansible Collection: my_ansible_collection.disable_suspend_collection
+# Ansible Collection: monobereadlity.system
 
 This Ansible collection provides a role to disable automatic suspend, hibernation, and related power-saving features on Fedora Linux systems. This is particularly useful for servers or virtual machines where suspend/idle modes are not desired.
 
@@ -31,10 +31,10 @@ This Ansible collection provides a role to disable automatic suspend, hibernatio
 
 ### Installing from Ansible Galaxy (Hypothetical)
 
-If this collection were published to Ansible Galaxy under the namespace `my_ansible_collection` and name `disable_suspend_collection`, you would install it using:
+If this collection were published to Ansible Galaxy under the namespace `monobereadlity` and name `system`, you would install it using:
 
 ```bash
-ansible-galaxy collection install my_ansible_collection.disable_suspend_collection
+ansible-galaxy collection install monobereadlity.system
 ```
 
 ## Usage Example
@@ -49,14 +49,14 @@ Here's an example playbook demonstrating how to use the `disable_suspend` role:
 
   roles:
     # If installed via ansible-galaxy or to a standard collection path:
-    - my_ansible_collection.disable_suspend_collection.disable_suspend
+    - monobereadlity.system.disable_suspend
     # If running directly from this repository structure (e.g., roles path points to './roles'):
     # - disable_suspend
 ```
 
 To use the role directly from this repository structure without "installing" it as a collection, you might need to adjust your `ansible.cfg` or playbook directory structure. A common way when testing locally is to have a playbook in the root of this repository and an `ansible.cfg` that sets `collections_paths = .` and `roles_path = ./roles`.
 
-However, the most straightforward way to use it as a collection from this local checkout, assuming your playbook is also in this repo, is to ensure your `collections_paths` in `ansible.cfg` (or environment variable `ANSIBLE_COLLECTIONS_PATHS`) points to the parent directory of where `my_ansible_collection` would reside if it were in the standard `ansible_collections/my_ansible_collection/disable_suspend_collection` structure.
+However, the most straightforward way to use it as a collection from this local checkout, assuming your playbook is also in this repo, is to ensure your `collections_paths` in `ansible.cfg` (or environment variable `ANSIBLE_COLLECTIONS_PATHS`) points to the parent directory of where `monobereadlity` would reside if it were in the standard `ansible_collections/monobereadlity/system` structure.
 
 Given the current structure (collection directly at root):
 If you place your playbook in the root of this repository, you can specify the collection like this:
@@ -68,7 +68,7 @@ If you place your playbook in the root of this repository, you can specify the c
   become: yes
 
   collections:
-    - my_ansible_collection.disable_suspend_collection # This makes roles available by their short name
+    - monobereadlity.system # This makes roles available by their short name
 
   roles:
     - disable_suspend
@@ -81,7 +81,7 @@ Or, more explicitly, if `ansible.cfg` has `collections_paths = ./:~/.ansible/col
   become: yes
 
   roles:
-    - my_ansible_collection.disable_suspend_collection.disable_suspend
+    - monobereadlity.system.disable_suspend
 ```
 
 

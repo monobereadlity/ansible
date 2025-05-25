@@ -1,9 +1,8 @@
-namespace: my_ansible_collection
-name: disable_suspend_collection
+namespace: monobereadlity
+name: system
 version: 0.1.0
 readme: README.md
 authors:
-  - Jules (Google AI)
 description: An Ansible collection to disable automatic suspend and related power saving features.
 license:
   - MIT
@@ -14,6 +13,6 @@ tags:
   - gdm
   - gnome
 dependencies: {}
-repository: https://github.com/your_username/your_repository # Placeholder, will be updated if possible
-homepage: https://github.com/your_username/your_repository # Placeholder
-issues: https://github.com/your_username/your_repository/issues # Placeholder
+repository: https://github.com/monobereadlity/your_repository # Placeholder, will be updated if possible
+homepage: https://github.com/monobereadlity/your_repository # Placeholder
+issues: https://github.com/monobereadlity/your_repository/issues # Placeholder
