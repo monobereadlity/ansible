@@ -1,0 +1,71 @@
+---
+- name: Verify disable_suspend role configuration
+  hosts: all
+  gather_facts: false # Facts are gathered by converge.yml if needed, or can be enabled here.
+  tasks:
+    # Verify logind.conf settings
+    - name: Check for HandleSuspendKey=ignore in logind.conf
+      ansible.builtin.command: "grep -Fxq 'HandleSuspendKey=ignore' /etc/systemd/logind.conf"
+      changed_when: false
+      failed_when: "grep_result.rc != 0"
+      register: grep_result
+
+    - name: Check for HandleLidSwitch=ignore in logind.conf
+      ansible.builtin.command: "grep -Fxq 'HandleLidSwitch=ignore' /etc/systemd/logind.conf"
+      changed_when: false
+      failed_when: "grep_result_lid.rc != 0"
+      register: grep_result_lid
+
+    - name: Check for HandleLidSwitchExternalPower=ignore in logind.conf
+      ansible.builtin.command: "grep -Fxq 'HandleLidSwitchExternalPower=ignore' /etc/systemd/logind.conf"
+      changed_when: false
+      failed_when: "grep_result_lid_ext.rc != 0"
+      register: grep_result_lid_ext
+
+    - name: Check for IdleAction=ignore in logind.conf
+      ansible.builtin.command: "grep -Fxq 'IdleAction=ignore' /etc/systemd/logind.conf"
+      changed_when: false
+      failed_when: "grep_result_idle.rc != 0"
+      register: grep_result_idle
+
+    - name: Check for IdleActionSec=0 in logind.conf
+      ansible.builtin.command: "grep -Fxq 'IdleActionSec=0' /etc/systemd/logind.conf"
+      changed_when: false
+      failed_when: "grep_result_idle_sec.rc != 0"
+      register: grep_result_idle_sec
+
+    # Verify systemd targets are masked
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Assert sleep.target is masked
+      ansible.builtin.assert:
+        that:
+          - "ansible_facts.services['sleep.target'] is defined"
+          - "ansible_facts.services['sleep.target'].unit_file_state == 'masked' or ansible_facts.services['sleep.target'].load_state == 'masked'"
+        fail_msg: "sleep.target is not properly masked. State: {{ ansible_facts.services['sleep.target'] | default('not found') }}"
+        success_msg: "sleep.target is correctly masked."
+
+    - name: Assert suspend.target is masked
+      ansible.builtin.assert:
+        that:
+          - "ansible_facts.services['suspend.target'] is defined"
+          - "ansible_facts.services['suspend.target'].unit_file_state == 'masked' or ansible_facts.services['suspend.target'].load_state == 'masked'"
+        fail_msg: "suspend.target is not properly masked. State: {{ ansible_facts.services['suspend.target'] | default('not found') }}"
+        success_msg: "suspend.target is correctly masked."
+
+    - name: Assert hibernate.target is masked
+      ansible.builtin.assert:
+        that:
+          - "ansible_facts.services['hibernate.target'] is defined"
+          - "ansible_facts.services['hibernate.target'].unit_file_state == 'masked' or ansible_facts.services['hibernate.target'].load_state == 'masked'"
+        fail_msg: "hibernate.target is not properly masked. State: {{ ansible_facts.services['hibernate.target'] | default('not found') }}"
+        success_msg: "hibernate.target is correctly masked."
+
+    - name: Assert hybrid-sleep.target is masked
+      ansible.builtin.assert:
+        that:
+          - "ansible_facts.services['hybrid-sleep.target'] is defined"
+          - "ansible_facts.services['hybrid-sleep.target'].unit_file_state == 'masked' or ansible_facts.services['hybrid-sleep.target'].load_state == 'masked'"
+        fail_msg: "hybrid-sleep.target is not properly masked. State: {{ ansible_facts.services['hybrid-sleep.target'] | default('not found') }}"
+        success_msg: "hybrid-sleep.target is correctly masked."
