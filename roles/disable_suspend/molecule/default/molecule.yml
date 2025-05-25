@@ -1,0 +1,10 @@
+---
+driver:
+  name: default
+platforms:
+  - name: instance
+    image: fedora:latest
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
