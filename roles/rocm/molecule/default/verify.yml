@@ -1,0 +1,20 @@
+---
+- name: Verify ROCm package installation
+  hosts: all
+  become: true
+  vars_files:
+    # Load the default variables from the role to access rocm_packages
+    # The path is relative to the playbook file during molecule execution.
+    - ../../defaults/main.yml
+  tasks:
+    - name: Gather package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Check if ROCm packages are installed
+      ansible.builtin.assert:
+        that: "item in ansible_facts.packages"
+        fail_msg: "Package {{ item }} was not found after installation."
+        success_msg: "Package {{ item }} is installed."
+      loop: "{{ rocm_packages }}"
+      # Loop through the rocm_packages list defined in defaults/main.yml

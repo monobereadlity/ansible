@@ -1,0 +1,15 @@
+---
+# Tasks for rocm_install role
+- name: Install ROCm packages from Fedora repositories
+  ansible.builtin.dnf:
+    name: "{{ rocm_packages }}"
+    state: present
+    autoremove: false # Optional: to prevent removal of dependencies if not explicitly listed
+    enablerepo: "*" # Consider if specific ROCm repos need to be enabled, for now assuming they are generally available or enabled system-wide
+  become: true
+  vars:
+    # This ensures that if rocm_packages is not defined elsewhere,
+    # it gracefully falls back to an empty list, preventing errors.
+    # However, our defaults/main.yml should always provide it.
+    rocm_packages: "{{ rocm_packages | default([]) }}"
+  when: ansible_os_family == "RedHat" or ansible_distribution == "Fedora"

@@ -13,6 +13,10 @@ This Ansible collection provides a role to disable automatic suspend, hibernatio
         *   `IdleActionSec=0`
     *   Masks systemd targets: `sleep.target`, `suspend.target`, `hibernate.target`, `hybrid-sleep.target`.
     *   Restarts `systemd-logind` service to apply changes.
+*   **`rocm`**:
+    *   Installs AMD ROCm libraries and tools on Fedora Linux systems.
+    *   Uses Fedora's official repositories.
+    *   The list of packages to be installed can be customized using the `rocm_packages` variable, which defaults to a comprehensive list in `roles/rocm/defaults/main.yml`.
 
 ## Requirements
 
@@ -84,10 +88,57 @@ Or, more explicitly, if `ansible.cfg` has `collections_paths = ./:~/.ansible/col
     - monobereadlity.system.disable_suspend
 ```
 
+```yaml
+- name: Install ROCm packages on Fedora hosts
+  hosts: fedora_rocm_servers
+  become: yes # Required for package installation
 
-## Development
+  collections:
+    - monobereadlity.system
 
-Ensure you have Ansible installed. No other specific development dependencies are required for the role itself.
+  roles:
+    - rocm
+    # Optionally, override default packages:
+    # - role: rocm
+    #   vars:
+    #     rocm_packages:
+    #       - rocminfo
+    #       - rocm-smi
+```
+
+
+## Testing and Development
+
+This collection uses Molecule for role testing and `ansible-lint` for linting. A `Makefile` is provided for convenience.
+
+**Prerequisites:**
+*   Python 3.x
+*   Ansible
+*   Ansible Lint (`ansible-lint`)
+*   Molecule (`molecule`)
+*   Molecule Docker driver (`molecule-docker`)
+*   Docker
+
+Install Python dependencies using pip:
+```bash
+pip install ansible ansible-lint molecule molecule-docker
+```
+
+**Available Makefile targets:**
+*   `make help`: Display available targets.
+*   `make lint`: Lint all roles using `ansible-lint`.
+*   `make test`: Run Molecule tests for all roles that have a default Molecule scenario.
+    *   `make test-<role_name>`: Run Molecule tests for a specific role (e.g., `make test-rocm`, `make test-disable_suspend`).
+
+**Manual Molecule Testing:**
+To test a specific role (e.g., `rocm`):
+```bash
+cd roles/rocm
+molecule test -s default
+```
+
+**Continuous Integration (CI):**
+Basic CI is set up using GitHub Actions (`.github/workflows/molecule_tests.yml`) to automatically run Molecule tests for the `rocm` role on pushes and pull requests to the `master` branch.
 
 ## License
 
